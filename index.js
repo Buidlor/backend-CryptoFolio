@@ -31,8 +31,21 @@ const getDemoData = async () => {
         chain,
     })
     const tokens = tokenBalances.result.map(token => token.display());
-    return {native, tokens};
+
+    const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
+        address,
+        chain,
+        limit: 10,
+    })
+    const nfts = nftsBalances.result.map(nft =>({
+        name: nft.result.name,
+        amount: nft.result.amount,
+        metadata: nft.result.metadata,
+    }));
+ 
+    return {native, tokens, nfts};
 }
+
 
 app.get("/demo", async (req, res) => {
     try{
