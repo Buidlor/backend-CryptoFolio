@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code files
+.vscode/
+
+# Dependency lock files
+package-lock.json
+yarn.lock
+npm-shrinkwrap.json
