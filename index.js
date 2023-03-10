@@ -15,6 +15,7 @@ const chain = EvmChain.ETHEREUM;
 app.use(express.json());
 app.use(cookieParser());
 
+//origin is the url of the frontend
 app.use(cors({
     origin: process.env.REACT_URL,
     credentials: true,
