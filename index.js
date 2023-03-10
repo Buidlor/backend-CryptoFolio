@@ -8,8 +8,8 @@ const  jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
-const chain = EvmChain.ARBITRUM;
-const address = process.env.ADDRESS;
+const chain = EvmChain.ETHEREUM;
+
 
 
 app.use(express.json());
@@ -30,6 +30,7 @@ const config = {
 
 // request message to be signed by client
 app.post('/request-message', async (req, res) => {
+    console.log(req.body);
     const {address, chain, network} = req.body;
     try{
         const message = await Moralis.Auth.requestMessage({
@@ -95,7 +96,7 @@ app.get('/logout', async (req, res) => {
 });
     
 
-app.get('/', (req, res) => res.send('hello world'));
+
 
 const startServer = async () => {
     await Moralis.start({
@@ -105,45 +106,46 @@ const startServer = async () => {
 
 
 
-const getDemoData = async () => {
-    const nativeBalance = await Moralis.EvmApi.balance.getNativeBalance({
-        address,
-        chain,
-    })
-    const native = nativeBalance.result.balance.ether;
-
-    const tokenBalances = await Moralis.EvmApi.token.getWalletTokenBalances({
-        address,
-        chain,
-    })
-    const tokens = tokenBalances.result.map(token => token.display());
-
-    const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
-        address,
-        chain,
-        limit: 10,
-    })
-    const nfts = nftsBalances.result.map(nft =>({
-        name: nft.result.name,
-        amount: nft.result.amount,
-        metadata: nft.result.metadata,
-    }));
- 
-    return {native, tokens, nfts};
-}
-
-
-app.get("/demo", async (req, res) => {
+const getDemoData = async (req, res) => {
+    const {address} = req.params;
     try{
-        const data = await getDemoData();
+        const nativeBalance = await Moralis.EvmApi.balance.getNativeBalance({
+            address,
+            chain,
+        })
+        const native = nativeBalance.result.balance.ether;
+
+        const tokenBalances = await Moralis.EvmApi.token.getWalletTokenBalances({
+            address,
+            chain,
+        })
+        const tokens = tokenBalances.result.map(token => token.display());
+
+        const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
+            address,
+            chain,
+            limit: 10,
+        })
+        const nfts = nftsBalances.result.map(nft =>({
+            name: nft.result.name,
+            amount: nft.result.amount,
+            metadata: nft.result.metadata,
+        }));
+
+        const data = {native, tokens, nfts};
         res.status(200)
         res.json(data);
+        
     }catch(error) {
         console.error(error);
         res.status(500);
         res.json({error: error.message});
     }
-})
+}
+
+
+app.get("/assets/:address", getDemoData);
+
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
