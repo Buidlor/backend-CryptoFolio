@@ -8,8 +8,8 @@ const  jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
-const chain = EvmChain.ETHEREUM;
-
+const chains = [EvmChain.ETHEREUM, EvmChain.ARBITRUM, EvmChain.AVALANCHE, EvmChain.BSC, EvmChain.CRONOS, EvmChain.FANTOM, EvmChain.POLYGON];
+const chain = EvmChain.ETHEREUM
 
 
 app.use(express.json());
@@ -110,17 +110,20 @@ const startServer = async () => {
 const getDemoData = async (req, res) => {
     const {address} = req.params;
     try{
-        const nativeBalance = await Moralis.EvmApi.balance.getNativeBalance({
-            address,
-            chain,
-        })
-        const native = nativeBalance.result.balance.ether;
+        console.log(chains[0].currency.name)
+       const natives = [];
+       for(ele of chains){
+        let native = (await Moralis.EvmApi.balance.getNativeBalance({address, chain: ele})).result.balance.ether;
+        natives.push(native);
+       }   
+       
 
         const tokenBalances = await Moralis.EvmApi.token.getWalletTokenBalances({
             address,
             chain,
         })
-        const tokens = tokenBalances.result.map(token => token.display());
+        const tokens = tokenBalances.result;
+        
 
         const nftsBalances = await Moralis.EvmApi.nft.getWalletNFTs({
             address,
@@ -133,9 +136,10 @@ const getDemoData = async (req, res) => {
             metadata: nft.result.metadata,
         }));
 
-        const data = {native, tokens, nfts};
+        const data = {natives};
         res.status(200)
         res.json(data);
+        
         
     }catch(error) {
         console.error(error);
