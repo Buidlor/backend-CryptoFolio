@@ -110,12 +110,14 @@ const startServer = async () => {
 const getDemoData = async (req, res) => {
     const {address} = req.params;
     try{
-        console.log(chains[0].currency.name)
+      
        const natives = [];
        for(ele of chains){
         let native = (await Moralis.EvmApi.balance.getNativeBalance({address, chain: ele})).result.balance.ether;
         natives.push(native);
        }   
+       const nativeETH = natives[0];
+       const chainData = chains.map(ele => ({ name: ele.name, symbol: ele.currency.symbol }));
        
 
         const tokenBalances = await Moralis.EvmApi.token.getWalletTokenBalances({
@@ -136,7 +138,7 @@ const getDemoData = async (req, res) => {
             metadata: nft.result.metadata,
         }));
 
-        const data = {natives};
+        const data = {natives, tokens, nfts, nativeETH, chainData};
         res.status(200)
         res.json(data);
         
