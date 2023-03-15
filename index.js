@@ -109,6 +109,7 @@ const startServer = async () => {
 
 const getDemoData = async (req, res) => {
     const {address} = req.params;
+   
     try{
       
        const natives = [];
@@ -138,7 +139,8 @@ const getDemoData = async (req, res) => {
             metadata: nft.result.metadata,
         }));
 
-        const data = {natives, tokens, nfts, nativeETH, chainData};
+        const data = {natives, tokens, nfts, nativeETH, chainData, address};
+        console.log(data.chainData);
         res.status(200)
         res.json(data);
         
