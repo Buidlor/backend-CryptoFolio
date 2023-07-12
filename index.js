@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-const port = 3000 || process.env.PORT;
+const port = process.env.PORT;
 const chains = [
   EvmChain.ETHEREUM,
   EvmChain.ARBITRUM,
