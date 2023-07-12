@@ -15,6 +15,6 @@ Thumbs.db
 .vscode/
 
 # Dependency lock files
-package-lock.json
+
 yarn.lock
 npm-shrinkwrap.json
